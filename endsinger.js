@@ -1,4 +1,4 @@
-var app = new PIXI.Application({ backgroundColor: 0x1099bb, width:600,height:600 });
+var app = new PIXI.Application({ backgroundColor: 0xffffff, width:600,height:600 });
 document.getElementById("view").appendChild(app.view);
 
 var gameState = {};
@@ -12,16 +12,30 @@ const RingCX = 300;
 const RingCY = 300;
 const RingDX = 0;
 const RingDY = 300;
-const NumberBossX = 270;
-const NumberBossY = 252;
-const NumberAX = 120;
-const NumberAY = 102;
-const NumberBX = 420;
-const NumberBY = 102;
-const NumberCX = 420;
-const NumberCY = 402;
-const NumberDX = 120;
-const NumberDY = 402;
+
+const NumberBossX = 300;
+const NumberBossY = 300;
+const NumberAX = 150;
+const NumberAY = 150;
+const NumberBX = 450;
+const NumberBY = 150;
+const NumberCX = 450;
+const NumberCY = 450;
+const NumberDX = 150;
+const NumberDY = 450;
+
+const NumberOffsetX = 75;
+const NumberOffsetY = 75;
+
+const ArrowLocationUpX = 275;
+const ArrowLocationUpY = 165;
+const ArrowLocationRightX = 385;
+const ArrowLocationRightY = 275;
+const ArrowLocationDownX = 275;
+const ArrowLocationDownY = 385;
+const ArrowLocationLeftX = 165;
+const ArrowLocationLeftY = 275;
+
 const arrowDamageUpX = 0;
 const arrowDamageUpY = 0;
 const arrowDamageRightX = 300;
@@ -34,7 +48,7 @@ const arrowDamageLeftY = 0;
 //ArenaFloor
 const arenaFloor = new PIXI.Container();
 app.stage.addChild(arenaFloor);
-arenaFloor.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/Floor.png')));
+arenaFloor.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/FloorEdit.png')));
 
 function addSpriteToContainer(container, sprite, x, y) {
     container.addChild(sprite);
@@ -43,30 +57,38 @@ function addSpriteToContainer(container, sprite, x, y) {
 }
 
 function addArrowSpriteToContainer() {
-    arrow = new PIXI.Container();
+    if(gameState.phase != 2){
+        boss = new PIXI.Container();
+        boss.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/Boss.png')));
+        boss.x = NumberBossX - NumberOffsetX;
+        boss.y = NumberBossY - NumberOffsetY;
+        app.stage.addChild(boss);
+    }
+
+    arrow = new PIXI.Container();  
     var rotation = gameState.bossArrowRotation;
     if(gameState.phase == 3)
         rotation = gameState.BossFinalArrowRotation;
 
     if(rotation == 1){
-        arrow.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/ArrowUp.png')));
-        arrow.x = 274;
-        arrow.y = 257;
+        arrow.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/BlockArrowUp.png')));
+        arrow.x = ArrowLocationUpX;
+        arrow.y = ArrowLocationUpY;
     }
     if(rotation  == 2){
-        arrow.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/ArrowRight.png')));
-        arrow.x = 257;
-        arrow.y = 274;
+        arrow.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/BlockArrowRight.png')));
+        arrow.x = ArrowLocationRightX;
+        arrow.y = ArrowLocationRightY;
     }
     if(rotation  == 3){
-        arrow.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/ArrowDown.png')));
-        arrow.x = 274;
-        arrow.y = 257;
+        arrow.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/BlockArrowDown.png')));
+        arrow.x = ArrowLocationDownX;
+        arrow.y = ArrowLocationDownY;
     }
     if(rotation  == 4){
-        arrow.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/ArrowLeft.png')));
-        arrow.x = 257;
-        arrow.y = 274;
+        arrow.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/BlockArrowLeft.png')));
+        arrow.x = ArrowLocationLeftX;
+        arrow.y = ArrowLocationLeftY;
     }
     app.stage.addChild(arrow);
 }
@@ -79,6 +101,7 @@ function clearActiveSprites(){
         ringPositionD.destroy({children:true, texture:true, baseTexture:false});
         rectangleAttack.destroy({children:true, texture:true, baseTexture:false});
         arrow.destroy({children:true, texture:true, baseTexture:false});
+        boss.destroy({children:true, texture:true, baseTexture:false});
     }
 
     if(gameState.phase == 2){
@@ -101,6 +124,7 @@ function clearActiveSprites(){
         ringPositionD.destroy({children:true, texture:true, baseTexture:false});
         rectangleAttack.destroy({children:true, texture:true, baseTexture:false});
         arrow.destroy({children:true, texture:true, baseTexture:false});
+        boss.destroy({children:true, texture:true, baseTexture:false});
     }
 }
 
@@ -177,39 +201,39 @@ function displayNumbers(){
     NumberBoss = new PIXI.Container();
 
     if(gameState.ANumber == 1)
-        addSpriteToContainer(NumberA,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberAX,NumberAY);
+        addSpriteToContainer(NumberA,new PIXI.Sprite(new PIXI.Texture.from('Img/1RingEdit.png')),NumberAX-NumberOffsetX,NumberAY-NumberOffsetY);
     if(gameState.ANumber == 2)
-        addSpriteToContainer(NumberA,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberAX,NumberAY);
+        addSpriteToContainer(NumberA,new PIXI.Sprite(new PIXI.Texture.from('Img/2RingEdit.png')),NumberAX-NumberOffsetX,NumberAY-NumberOffsetY);
     if(gameState.ANumber == 3)
-        addSpriteToContainer(NumberA,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberAX,NumberAY);
+        addSpriteToContainer(NumberA,new PIXI.Sprite(new PIXI.Texture.from('Img/3RingEdit.png')),NumberAX-NumberOffsetX,NumberAY-NumberOffsetY);
 
     if(gameState.BNumber == 1)
-        addSpriteToContainer(NumberB,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberBX,NumberBY);
+        addSpriteToContainer(NumberB,new PIXI.Sprite(new PIXI.Texture.from('Img/1RingEdit.png')),NumberBX-NumberOffsetX,NumberBY-NumberOffsetY);
     if(gameState.BNumber == 2)
-        addSpriteToContainer(NumberB,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberBX,NumberBY);
+        addSpriteToContainer(NumberB,new PIXI.Sprite(new PIXI.Texture.from('Img/2RingEdit.png')),NumberBX-NumberOffsetX,NumberBY-NumberOffsetY);
     if(gameState.BNumber == 3)
-        addSpriteToContainer(NumberB,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberBX,NumberBY);
+        addSpriteToContainer(NumberB,new PIXI.Sprite(new PIXI.Texture.from('Img/3RingEdit.png')),NumberBX-NumberOffsetX,NumberBY-NumberOffsetY);
 
     if(gameState.CNumber == 1)
-        addSpriteToContainer(NumberC,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberCX,NumberCY);
+        addSpriteToContainer(NumberC,new PIXI.Sprite(new PIXI.Texture.from('Img/1RingEdit.png')),NumberCX-NumberOffsetX,NumberCY-NumberOffsetY);
     if(gameState.CNumber == 2)
-        addSpriteToContainer(NumberC,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberCX,NumberCY);
+        addSpriteToContainer(NumberC,new PIXI.Sprite(new PIXI.Texture.from('Img/2RingEdit.png')),NumberCX-NumberOffsetX,NumberCY-NumberOffsetY);
     if(gameState.CNumber == 3)
-        addSpriteToContainer(NumberC,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberCX,NumberCY);
+        addSpriteToContainer(NumberC,new PIXI.Sprite(new PIXI.Texture.from('Img/3RingEdit.png')),NumberCX-NumberOffsetX,NumberCY-NumberOffsetY);
 
     if(gameState.DNumber == 1)
-        addSpriteToContainer(NumberD,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberDX,NumberDY);
+        addSpriteToContainer(NumberD,new PIXI.Sprite(new PIXI.Texture.from('Img/1RingEdit.png')),NumberDX-NumberOffsetX,NumberDY-NumberOffsetY);
     if(gameState.DNumber == 2)
-        addSpriteToContainer(NumberD,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberDX,NumberDY);
+        addSpriteToContainer(NumberD,new PIXI.Sprite(new PIXI.Texture.from('Img/2RingEdit.png')),NumberDX-NumberOffsetX,NumberDY-NumberOffsetY);
     if(gameState.DNumber == 3)
-        addSpriteToContainer(NumberD,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberDX,NumberDY);
+        addSpriteToContainer(NumberD,new PIXI.Sprite(new PIXI.Texture.from('Img/3RingEdit.png')),NumberDX-NumberOffsetX,NumberDY-NumberOffsetY);
 
     if(gameState.BossNumber == 1)
-        addSpriteToContainer(NumberBoss,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberBossX,NumberBossY);
+        addSpriteToContainer(NumberBoss,new PIXI.Sprite(new PIXI.Texture.from('Img/1RingEdit.png')),NumberBossX-NumberOffsetX,NumberBossY-NumberOffsetY);
     if(gameState.BossNumber == 2)
-        addSpriteToContainer(NumberBoss,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberBossX,NumberBossY);
+        addSpriteToContainer(NumberBoss,new PIXI.Sprite(new PIXI.Texture.from('Img/2RingEdit.png')),NumberBossX-NumberOffsetX,NumberBossY-NumberOffsetY);
     if(gameState.BossNumber == 3)
-        addSpriteToContainer(NumberBoss,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberBossX,NumberBossY);
+        addSpriteToContainer(NumberBoss,new PIXI.Sprite(new PIXI.Texture.from('Img/3RingEdit.png')),NumberBossX-NumberOffsetX,NumberBossY-NumberOffsetY);
    
     NumberA.interactive = true;
     NumberB.interactive = true;
@@ -265,9 +289,9 @@ function displayGameState(gameState){
         displayRingAttacks();
         addArrowSpriteToContainer();   
     }   
-    if(gameState.phase == 2){
-        addArrowSpriteToContainer();
+    if(gameState.phase == 2){       
         displayNumbers();     
+        addArrowSpriteToContainer();
     }
     if(gameState.phase == 3){       
         displayRectangleAttacks();    
