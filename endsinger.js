@@ -241,37 +241,45 @@ function displayNumbers(){
     if(gameState.posAfinalAnswer)
         NumberA.on('click', function (e) {
             gameState.correctAnswerFound = true;
+            console.log('A Clicked')
           });
     else{
         NumberA.on('click', function (e) {
             gameState.correctAnswerFound = false;
+            console.log('A Clicked')
           });
     }
     if(gameState.posBfinalAnswer)
         NumberB.on('click', function (e) {
             gameState.correctAnswerFound = true;
+            console.log('B Clicked')
         });
     else{
         NumberB.on('click', function (e) {
             gameState.correctAnswerFound = false;
+            console.log('B Clicked')
           });
     }
     if(gameState.posCfinalAnswer)
         NumberC.on('click', function (e) {
             gameState.correctAnswerFound = true;
+            console.log('C Clicked')
         });
     else{
         NumberC.on('click', function (e) {
             gameState.correctAnswerFound = false;
+            console.log('C Clicked')
           });
     }
     if(gameState.posDfinalAnswer)
         NumberD.on('click', function (e) {
             gameState.correctAnswerFound = true;
+            console.log('D Clicked')
         });
     else{
         NumberD.on('click', function (e) {
             gameState.correctAnswerFound = false;
+            console.log('D Clicked')
           });
     }
     app.stage.addChild(NumberA);
