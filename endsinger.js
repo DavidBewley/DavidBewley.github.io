@@ -58,26 +58,29 @@ function addArrowSpriteToContainer(container, x, y) {
 }
 
 function clearActiveSprites(){
-    ringPositionA.destroy({children:true, texture:true, baseTexture:false});
-    ringPositionB.destroy({children:true, texture:true, baseTexture:false});
-    ringPositionC.destroy({children:true, texture:true, baseTexture:false});
-    ringPositionD.destroy({children:true, texture:true, baseTexture:false});
-    arrow.destroy({children:true, texture:true, baseTexture:false});
-}
+    if(gameState.phase == 1){
+        ringPositionA.destroy({children:true, texture:true, baseTexture:false});
+        ringPositionB.destroy({children:true, texture:true, baseTexture:false});
+        ringPositionC.destroy({children:true, texture:true, baseTexture:false});
+        ringPositionD.destroy({children:true, texture:true, baseTexture:false});
+        arrow.destroy({children:true, texture:true, baseTexture:false});
+    }
 
-function clearNumberSprites(){
-     NumberA.destroy({children:true, texture:true, baseTexture:false});
-     NumberB.destroy({children:true, texture:true, baseTexture:false});
-     NumberC.destroy({children:true, texture:true, baseTexture:false});
-     NumberD.destroy({children:true, texture:true, baseTexture:false});
-     NumberBoss.destroy({children:true, texture:true, baseTexture:false});
-}
+    if(gameState.phase == 2){
+        NumberA.destroy({children:true, texture:true, baseTexture:false});
+        NumberB.destroy({children:true, texture:true, baseTexture:false});
+        NumberC.destroy({children:true, texture:true, baseTexture:false});
+        NumberD.destroy({children:true, texture:true, baseTexture:false});
+        NumberBoss.destroy({children:true, texture:true, baseTexture:false});
+        arrow.destroy({children:true, texture:true, baseTexture:false});
+    }
 
-function clearTextSprites(){
-    if(gameState.correctAnswerFound)
+    if(gameState.phase == 3){
+        if(gameState.correctAnswerFound)
         correctText.destroy({children:true, texture:true, baseTexture:false});
     else
         incorrectText.destroy({children:true, texture:true, baseTexture:false});
+    }
 }
 
 function displayGameState(gameState){
@@ -208,7 +211,6 @@ function displayGameState(gameState){
         app.stage.addChild(NumberBoss);
     }
     if(gameState.phase == 3){
-        clearNumberSprites();
         if(gameState.correctAnswerFound){
             correctText = new PIXI.Text("Correct", {font:"120px Arial", fill:"green"});
             app.stage.addChild(correctText);
@@ -257,7 +259,6 @@ CreateGameStart();
 
 function updateGameState(){
     if(gameState.phase == 4){
-        clearTextSprites();
         gameState.phase = 5;
     }
     if(gameState.phase == 3){ 
