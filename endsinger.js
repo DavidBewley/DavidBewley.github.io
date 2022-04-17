@@ -22,6 +22,14 @@ const NumberCX = 420;
 const NumberCY = 402;
 const NumberDX = 120;
 const NumberDY = 402;
+const arrowDamageUpX = 0;
+const arrowDamageUpY = 0;
+const arrowDamageRightX = 300;
+const arrowDamageRightY = 0;
+const arrowDamageDownX = 0;
+const arrowDamageDownY = 300;
+const arrowDamageLeftX = 0;
+const arrowDamageLeftY = 0;
 
 //ArenaFloor
 const arenaFloor = new PIXI.Container();
@@ -34,27 +42,33 @@ function addSpriteToContainer(container, sprite, x, y) {
     container.y = y;
 }
 
-function addArrowSpriteToContainer(container, x, y) {
-    if(gameState.bossArrowRotation == 1){
-        container.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/ArrowUp.png')));
-        container.x = 274;
-        container.y = 257;
+function addArrowSpriteToContainer() {
+    arrow = new PIXI.Container();
+    var rotation = gameState.bossArrowRotation;
+    if(gameState.phase == 3)
+        rotation = gameState.BossFinalArrowRotation;
+
+    if(rotation == 1){
+        arrow.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/ArrowUp.png')));
+        arrow.x = 274;
+        arrow.y = 257;
     }
-    if(gameState.bossArrowRotation  == 2){
-        container.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/ArrowRight.png')));
-        container.x = 257;
-        container.y = 274;
+    if(rotation  == 2){
+        arrow.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/ArrowRight.png')));
+        arrow.x = 257;
+        arrow.y = 274;
     }
-    if(gameState.bossArrowRotation  == 3){
-        container.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/ArrowDown.png')));
-        container.x = 274;
-        container.y = 257;
+    if(rotation  == 3){
+        arrow.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/ArrowDown.png')));
+        arrow.x = 274;
+        arrow.y = 257;
     }
-    if(gameState.bossArrowRotation  == 4){
-        container.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/ArrowLeft.png')));
-        container.x = 257;
-        container.y = 274;
+    if(rotation  == 4){
+        arrow.addChild(new PIXI.Sprite(new PIXI.Texture.from('Img/ArrowLeft.png')));
+        arrow.x = 257;
+        arrow.y = 274;
     }
+    app.stage.addChild(arrow);
 }
 
 function clearActiveSprites(){
@@ -63,6 +77,7 @@ function clearActiveSprites(){
         ringPositionB.destroy({children:true, texture:true, baseTexture:false});
         ringPositionC.destroy({children:true, texture:true, baseTexture:false});
         ringPositionD.destroy({children:true, texture:true, baseTexture:false});
+        rectangleAttack.destroy({children:true, texture:true, baseTexture:false});
         arrow.destroy({children:true, texture:true, baseTexture:false});
     }
 
@@ -77,148 +92,200 @@ function clearActiveSprites(){
 
     if(gameState.phase == 3){
         if(gameState.correctAnswerFound)
-        correctText.destroy({children:true, texture:true, baseTexture:false});
-    else
-        incorrectText.destroy({children:true, texture:true, baseTexture:false});
+            correctText.destroy({children:true, texture:true, baseTexture:false});
+        else
+            incorrectText.destroy({children:true, texture:true, baseTexture:false});
+        ringPositionA.destroy({children:true, texture:true, baseTexture:false});
+        ringPositionB.destroy({children:true, texture:true, baseTexture:false});
+        ringPositionC.destroy({children:true, texture:true, baseTexture:false});
+        ringPositionD.destroy({children:true, texture:true, baseTexture:false});
+        rectangleAttack.destroy({children:true, texture:true, baseTexture:false});
+        arrow.destroy({children:true, texture:true, baseTexture:false});
     }
+}
+
+function displayRectangleAttacks(){
+    rectangleAttack = new PIXI.Container();
+    var rotation = gameState.bossArrowRotation;
+    if(gameState.phase == 3)
+        rotation = gameState.BossFinalArrowRotation;
+
+    if(rotation == 1)
+        addSpriteToContainer(rectangleAttack,new PIXI.Sprite(new PIXI.Texture.from('Img/HalfSquareH.png')),arrowDamageUpX,arrowDamageUpY);
+    if(rotation == 2)
+        addSpriteToContainer(rectangleAttack,new PIXI.Sprite(new PIXI.Texture.from('Img/HalfSquareV.png')),arrowDamageRightX,arrowDamageRightY);
+    if(rotation == 3)
+        addSpriteToContainer(rectangleAttack,new PIXI.Sprite(new PIXI.Texture.from('Img/HalfSquareH.png')),arrowDamageDownX,arrowDamageDownY);
+    if(rotation == 4)
+        addSpriteToContainer(rectangleAttack,new PIXI.Sprite(new PIXI.Texture.from('Img/HalfSquareV.png')),arrowDamageLeftX,arrowDamageLeftY);
+
+    app.stage.addChild(rectangleAttack);
+}
+
+function displayRingAttacks(){
+    //logic for answer is wrong
+
+    ringPositionA = new PIXI.Container();
+    ringPositionB = new PIXI.Container();
+    ringPositionC = new PIXI.Container();
+    ringPositionD = new PIXI.Container();
+
+    var aSafe = gameState.posASafe;
+    var bSafe = gameState.posBSafe;
+    var cSafe = gameState.posCSafe;
+    var dSafe = gameState.posDSafe;
+
+    if(gameState.phase == 3){
+        if(gameState.ANumber == 2)
+            aSafe = !aSafe;
+        if(gameState.BNumber == 2)
+            bSafe = !bSafe;
+        if(gameState.CNumber == 2)
+            cSafe = !cSafe;
+        if(gameState.DNumber == 2)
+            dSafe = !dSafe;
+    }
+               
+    if(aSafe == true)
+        addSpriteToContainer(ringPositionA,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleEmpty.png')),RingAX,RingAY);
+    else
+        addSpriteToContainer(ringPositionA,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleFull.png')),RingAX,RingAY);        
+    if(bSafe == true)
+        addSpriteToContainer(ringPositionB,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleEmpty.png')),RingBX,RingBY);
+    else
+        addSpriteToContainer(ringPositionB,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleFull.png')),RingBX,RingBY);
+    if(cSafe == true)
+        addSpriteToContainer(ringPositionC,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleEmpty.png')),RingCX,RingCY);
+    else
+        addSpriteToContainer(ringPositionC,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleFull.png')),RingCX,RingCY);
+    if(dSafe == true)
+        addSpriteToContainer(ringPositionD,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleEmpty.png')),RingDX,RingDY);
+    else
+        addSpriteToContainer(ringPositionD,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleFull.png')),RingDX,RingDY);
+
+    app.stage.addChild(ringPositionA);
+    app.stage.addChild(ringPositionB);
+    app.stage.addChild(ringPositionC);
+    app.stage.addChild(ringPositionD);
+}
+
+function displayNumbers(){
+    NumberA = new PIXI.Container();
+    NumberB = new PIXI.Container();
+    NumberC = new PIXI.Container();
+    NumberD = new PIXI.Container();
+    NumberBoss = new PIXI.Container();
+
+    if(gameState.ANumber == 1)
+        addSpriteToContainer(NumberA,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberAX,NumberAY);
+    if(gameState.ANumber == 2)
+        addSpriteToContainer(NumberA,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberAX,NumberAY);
+    if(gameState.ANumber == 3)
+        addSpriteToContainer(NumberA,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberAX,NumberAY);
+
+    if(gameState.BNumber == 1)
+        addSpriteToContainer(NumberB,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberBX,NumberBY);
+    if(gameState.BNumber == 2)
+        addSpriteToContainer(NumberB,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberBX,NumberBY);
+    if(gameState.BNumber == 3)
+        addSpriteToContainer(NumberB,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberBX,NumberBY);
+
+    if(gameState.CNumber == 1)
+        addSpriteToContainer(NumberC,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberCX,NumberCY);
+    if(gameState.CNumber == 2)
+        addSpriteToContainer(NumberC,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberCX,NumberCY);
+    if(gameState.CNumber == 3)
+        addSpriteToContainer(NumberC,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberCX,NumberCY);
+
+    if(gameState.DNumber == 1)
+        addSpriteToContainer(NumberD,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberDX,NumberDY);
+    if(gameState.DNumber == 2)
+        addSpriteToContainer(NumberD,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberDX,NumberDY);
+    if(gameState.DNumber == 3)
+        addSpriteToContainer(NumberD,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberDX,NumberDY);
+
+    if(gameState.BossNumber == 1)
+        addSpriteToContainer(NumberBoss,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberBossX,NumberBossY);
+    if(gameState.BossNumber == 2)
+        addSpriteToContainer(NumberBoss,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberBossX,NumberBossY);
+    if(gameState.BossNumber == 3)
+        addSpriteToContainer(NumberBoss,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberBossX,NumberBossY);
+   
+    NumberA.interactive = true;
+    NumberB.interactive = true;
+    NumberC.interactive = true;
+    NumberD.interactive = true;
+    
+    if(gameState.posAfinalAnswer)
+        NumberA.on('mousedown', function (e) {
+            gameState.correctAnswerFound = true;
+          });
+    else{
+        NumberA.on('mousedown', function (e) {
+            gameState.correctAnswerFound = false;
+          });
+    }
+    if(gameState.posBfinalAnswer)
+        NumberB.on('mousedown', function (e) {
+            gameState.correctAnswerFound = true;
+        });
+    else{
+        NumberB.on('mousedown', function (e) {
+            gameState.correctAnswerFound = false;
+          });
+    }
+    if(gameState.posCfinalAnswer)
+        NumberC.on('mousedown', function (e) {
+            gameState.correctAnswerFound = true;
+        });
+    else{
+        NumberC.on('mousedown', function (e) {
+            gameState.correctAnswerFound = false;
+          });
+    }
+    if(gameState.posDfinalAnswer)
+        NumberD.on('mousedown', function (e) {
+            gameState.correctAnswerFound = true;
+        });
+    else{
+        NumberD.on('mousedown', function (e) {
+            gameState.correctAnswerFound = false;
+          });
+    }
+    app.stage.addChild(NumberA);
+    app.stage.addChild(NumberB);
+    app.stage.addChild(NumberC);
+    app.stage.addChild(NumberD);
+    app.stage.addChild(NumberBoss);
 }
 
 function displayGameState(gameState){
     if(gameState.phase == 1){
-
-        arrow = new PIXI.Container();
-        addArrowSpriteToContainer(arrow,2,2);
-        app.stage.addChild(arrow);
-
-        ringPositionA = new PIXI.Container();
-        ringPositionB = new PIXI.Container();
-        ringPositionC = new PIXI.Container();
-        ringPositionD = new PIXI.Container();
-               
-        if(gameState.posASafe == true)
-            addSpriteToContainer(ringPositionA,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleEmpty.png')),RingAX,RingAY);
-        else
-            addSpriteToContainer(ringPositionA,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleFull.png')),RingAX,RingAY);        
-        if(gameState.posBSafe == true)
-            addSpriteToContainer(ringPositionB,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleEmpty.png')),RingBX,RingBY);
-        else
-            addSpriteToContainer(ringPositionB,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleFull.png')),RingBX,RingBY);
-        if(gameState.posCSafe == true)
-            addSpriteToContainer(ringPositionC,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleEmpty.png')),RingCX,RingCY);
-        else
-            addSpriteToContainer(ringPositionC,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleFull.png')),RingCX,RingCY);
-        if(gameState.posDSafe == true)
-            addSpriteToContainer(ringPositionD,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleEmpty.png')),RingDX,RingDY);
-        else
-            addSpriteToContainer(ringPositionD,new PIXI.Sprite(new PIXI.Texture.from('Img/CircleFull.png')),RingDX,RingDY);
-
-        app.stage.addChild(ringPositionA);
-        app.stage.addChild(ringPositionB);
-        app.stage.addChild(ringPositionC);
-        app.stage.addChild(ringPositionD);
+        displayRectangleAttacks();
+        displayRingAttacks();
+        addArrowSpriteToContainer();   
     }   
     if(gameState.phase == 2){
-        arrow = new PIXI.Container();
-        addArrowSpriteToContainer(arrow,2,2);
-        app.stage.addChild(arrow);
-
-        NumberA = new PIXI.Container();
-        NumberB = new PIXI.Container();
-        NumberC = new PIXI.Container();
-        NumberD = new PIXI.Container();
-        NumberBoss = new PIXI.Container();
-
-        if(gameState.ANumber == 1)
-            addSpriteToContainer(NumberA,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberAX,NumberAY);
-        if(gameState.ANumber == 2)
-            addSpriteToContainer(NumberA,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberAX,NumberAY);
-        if(gameState.ANumber == 3)
-            addSpriteToContainer(NumberA,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberAX,NumberAY);
-
-        if(gameState.BNumber == 1)
-            addSpriteToContainer(NumberB,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberBX,NumberBY);
-        if(gameState.BNumber == 2)
-            addSpriteToContainer(NumberB,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberBX,NumberBY);
-        if(gameState.BNumber == 3)
-            addSpriteToContainer(NumberB,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberBX,NumberBY);
-
-        if(gameState.CNumber == 1)
-            addSpriteToContainer(NumberC,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberCX,NumberCY);
-        if(gameState.CNumber == 2)
-            addSpriteToContainer(NumberC,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberCX,NumberCY);
-        if(gameState.CNumber == 3)
-            addSpriteToContainer(NumberC,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberCX,NumberCY);
-
-        if(gameState.DNumber == 1)
-            addSpriteToContainer(NumberD,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberDX,NumberDY);
-        if(gameState.DNumber == 2)
-            addSpriteToContainer(NumberD,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberDX,NumberDY);
-        if(gameState.DNumber == 3)
-            addSpriteToContainer(NumberD,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberDX,NumberDY);
-
-        if(gameState.BossNumber == 1)
-            addSpriteToContainer(NumberBoss,new PIXI.Sprite(new PIXI.Texture.from('Img/1.png')),NumberBossX,NumberBossY);
-        if(gameState.BossNumber == 2)
-            addSpriteToContainer(NumberBoss,new PIXI.Sprite(new PIXI.Texture.from('Img/2.png')),NumberBossX,NumberBossY);
-        if(gameState.BossNumber == 3)
-            addSpriteToContainer(NumberBoss,new PIXI.Sprite(new PIXI.Texture.from('Img/3.png')),NumberBossX,NumberBossY);
-       
-        NumberA.interactive = true;
-        NumberB.interactive = true;
-        NumberC.interactive = true;
-        NumberD.interactive = true;
-        
-        if(gameState.posAfinalAnswer)
-            NumberA.on('mousedown', function (e) {
-                gameState.correctAnswerFound = true;
-              });
-        else{
-            NumberA.on('mousedown', function (e) {
-                gameState.correctAnswerFound = false;
-              });
-        }
-        if(gameState.posBfinalAnswer)
-            NumberB.on('mousedown', function (e) {
-                gameState.correctAnswerFound = true;
-            });
-        else{
-            NumberB.on('mousedown', function (e) {
-                gameState.correctAnswerFound = false;
-              });
-        }
-        if(gameState.posCfinalAnswer)
-            NumberC.on('mousedown', function (e) {
-                gameState.correctAnswerFound = true;
-            });
-        else{
-            NumberC.on('mousedown', function (e) {
-                gameState.correctAnswerFound = false;
-              });
-        }
-        if(gameState.posDfinalAnswer)
-            NumberD.on('mousedown', function (e) {
-                gameState.correctAnswerFound = true;
-            });
-        else{
-            NumberD.on('mousedown', function (e) {
-                gameState.correctAnswerFound = false;
-              });
-        }
-        app.stage.addChild(NumberA);
-        app.stage.addChild(NumberB);
-        app.stage.addChild(NumberC);
-        app.stage.addChild(NumberD);
-        app.stage.addChild(NumberBoss);
+        addArrowSpriteToContainer();
+        displayNumbers();     
     }
-    if(gameState.phase == 3){
+    if(gameState.phase == 3){       
+        displayRectangleAttacks();    
+        displayRingAttacks();  
+        addArrowSpriteToContainer();
+
         if(gameState.correctAnswerFound){
-            correctText = new PIXI.Text("Correct", {font:"120px Arial", fill:"green"});
+            correctText = new PIXI.Text("Correct", {font:"200px Arial", fill:"green"});
+            correctText.scale.x = 3;
+            correctText.scale.y = 3;
             app.stage.addChild(correctText);
         }
         else{
-            incorrectText = new PIXI.Text("Incorrect", {font:"120px Arial", fill:"red"});
+            incorrectText = new PIXI.Text("Incorrect", {font:"200px Arial", fill:"red"});
+            incorrectText.scale.x = 3;
+            incorrectText.scale.y = 3;
             app.stage.addChild(incorrectText);
-        }
+        }      
     }
 }
 
@@ -262,7 +329,7 @@ function updateGameState(){
         gameState.phase = 5;
     }
     if(gameState.phase == 3){ 
-        gameState.timer = 1000;
+        gameState.timer = 5000;
         gameState.phase = 4;      
     }    
     if(gameState.phase == 2){
@@ -289,6 +356,10 @@ function updateGameState(){
             determineSolution();
         }
     }
+    if(gameState.phase == 5){
+        gameState.phase = 1;
+        CreateGameStart();
+    }
 }
 
 function determineSolution(){
@@ -309,6 +380,8 @@ function determineSolution(){
         finalRotation += 4;
     if(finalRotation > 4)
         finalRotation -= 4;
+
+    gameState.BossFinalArrowRotation = finalRotation;
 
     markOppositeSideFailure(finalRotation);
     markRandomOtherAsIncorrect();
