@@ -147,8 +147,6 @@ function displayRectangleAttacks(){
 }
 
 function displayRingAttacks(){
-    //logic for answer is wrong
-
     ringPositionA = new PIXI.Container();
     ringPositionB = new PIXI.Container();
     ringPositionC = new PIXI.Container();
@@ -241,38 +239,38 @@ function displayNumbers(){
     NumberD.interactive = true;
     
     if(gameState.posAfinalAnswer)
-        NumberA.on('mousedown', function (e) {
+        NumberA.on('click', function (e) {
             gameState.correctAnswerFound = true;
           });
     else{
-        NumberA.on('mousedown', function (e) {
+        NumberA.on('click', function (e) {
             gameState.correctAnswerFound = false;
           });
     }
     if(gameState.posBfinalAnswer)
-        NumberB.on('mousedown', function (e) {
+        NumberB.on('click', function (e) {
             gameState.correctAnswerFound = true;
         });
     else{
-        NumberB.on('mousedown', function (e) {
+        NumberB.on('click', function (e) {
             gameState.correctAnswerFound = false;
           });
     }
     if(gameState.posCfinalAnswer)
-        NumberC.on('mousedown', function (e) {
+        NumberC.on('click', function (e) {
             gameState.correctAnswerFound = true;
         });
     else{
-        NumberC.on('mousedown', function (e) {
+        NumberC.on('click', function (e) {
             gameState.correctAnswerFound = false;
           });
     }
     if(gameState.posDfinalAnswer)
-        NumberD.on('mousedown', function (e) {
+        NumberD.on('click', function (e) {
             gameState.correctAnswerFound = true;
         });
     else{
-        NumberD.on('mousedown', function (e) {
+        NumberD.on('click', function (e) {
             gameState.correctAnswerFound = false;
           });
     }
