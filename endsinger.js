@@ -198,6 +198,15 @@ function displayNumbers(){
     NumberD = new PIXI.Container();
     NumberBoss = new PIXI.Container();
 
+    if(gameState.selectedAnswer == 'A')
+        NumberA.tint = 0x009c2f;
+    if(gameState.posBfinalAnswer)
+        NumberB.tint = 0x009c2f;
+    if(gameState.posCfinalAnswer)
+        NumberC.tint = 0x009c2f;
+    if(gameState.posDfinalAnswer)
+        NumberD.tint = 0x009c2f;
+
     if(gameState.ANumber == 1)
         addSpriteToContainer(NumberA,new PIXI.Sprite(new PIXI.Texture.from('Img/1RingEdit.png')),NumberAX-NumberOffsetX,NumberAY-NumberOffsetY);
     if(gameState.ANumber == 2)
@@ -238,15 +247,22 @@ function displayNumbers(){
     NumberC.interactive = true;
     NumberD.interactive = true;
     
-    if(gameState.posAfinalAnswer)
+    if(gameState.posAfinalAnswer){
         NumberA.on('pointerdown', function (e) {
             gameState.correctAnswerFound = true;
-            console.log('A Clicked')
+            console.log('A Clicked');
+            gameState.selectedAnswer = 'A';
+            clearActiveSprites();
+            displayGameState(gameState);
           });
+        }
     else{
         NumberA.on('pointerdown', function (e) {
             gameState.correctAnswerFound = false;
-            console.log('A Clicked')
+            console.log('A Clicked');
+            gameState.selectedAnswer = 'A';
+            clearActiveSprites();
+            displayGameState(gameState);
           });
     }
     if(gameState.posBfinalAnswer)
@@ -336,6 +352,7 @@ function CreateGameStart(){
         posBfinalAnswer: false,
         posCfinalAnswer: false,
         posDfinalAnswer: false,
+        selectedAnswer: 'none',
         correctAnswerFound: false,
         timer: 4000, //4000 is game like
         bossArrowRotation: Math.floor(Math.random() * 4) + 1
